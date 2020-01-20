@@ -6534,10 +6534,12 @@ lyd_find_path(const struct lyd_node *ctx_node, const char *path)
     int mod_name_len, name_len, is_relative = -1;
     uint32_t i;
 
+    printf("lyd_find_path 1");
     if (!ctx_node || !path) {
         LOGARG;
         return NULL;
     }
+    printf("lyd_find_path 2");
 
     if (parse_schema_nodeid(path, &mod_name, &mod_name_len, &name, &name_len, &is_relative, NULL, NULL, 1) > 0) {
         if (name[0] == '#' && !is_relative) {
@@ -6548,12 +6550,14 @@ lyd_find_path(const struct lyd_node *ctx_node, const char *path)
             path = name + name_len;
         }
     }
+    printf("lyd_find_path 3");
 
     /* transform JSON into YANG XPATH */
     yang_xpath = transform_json2xpath(lyd_node_module(ctx_node), path);
     if (!yang_xpath) {
         return NULL;
     }
+    printf("lyd_find_path 4");
 
     memset(&xp_set, 0, sizeof xp_set);
 
@@ -6562,10 +6566,12 @@ lyd_find_path(const struct lyd_node *ctx_node, const char *path)
         return NULL;
     }
     free(yang_xpath);
+    printf("lyd_find_path 5");
 
     set = ly_set_new();
     LY_CHECK_ERR_RETURN(!set, LOGMEM(ctx_node->schema->module->ctx), NULL);
 
+    printf("lyd_find_path 6");
     if (xp_set.type == LYXP_SET_NODE_SET) {
         for (i = 0; i < xp_set.used; ++i) {
             if (xp_set.val.nodes[i].type == LYXP_NODE_ELEM) {
@@ -6577,8 +6583,10 @@ lyd_find_path(const struct lyd_node *ctx_node, const char *path)
             }
         }
     }
+    printf("lyd_find_path 7");
     /* free xp_set content */
     lyxp_set_cast(&xp_set, LYXP_SET_EMPTY, ctx_node, NULL, 0);
+    printf("lyd_find_path 8");
 
     return set;
 }
